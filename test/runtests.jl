@@ -1,6 +1,9 @@
-using SymQM
 using Test
+using SymQM
 
-@testset "SymQM.jl" begin
-    # Write your tests here.
+@testset "SymQM scaffold" begin
+	@test isabstracttype(AbstractQuantumOperator)
+	@test isabstracttype(QSym)
+	# Check that QSym integrates with SymbolicUtils' variant hierarchy
+	@test QSym <: SymbolicUtils.SymVariant
 end

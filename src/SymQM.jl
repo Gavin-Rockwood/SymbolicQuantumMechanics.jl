@@ -1,5 +1,20 @@
 module SymQM
 
-# Write your package code here.
+using TermInterface
+using Symbolics
+using SymbolicUtils
+using Reexport
 
-end
+using .SymbolicUtils: NO_METADATA
+
+
+
+import Base: *, +, -, ^
+const SNuN = Union{<:SymbolicUtils.Symbolic{<:Number},<:Number}
+
+
+include("QNumber/QNumber.jl")
+include("Operators/Operators.jl")
+
+
+end # module SymQM
