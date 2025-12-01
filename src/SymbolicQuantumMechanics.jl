@@ -1,4 +1,4 @@
-module SymQM
+module SymbolicQuantumMechanics
 
 using TermInterface
 using Symbolics
