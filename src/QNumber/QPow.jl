@@ -1,8 +1,8 @@
-struct QPow{M,T} <: QTerm
+struct QPow{T} <: QTerm
     x#::T where T <: QNumber
     y::T
-    metadata::M
-    function QPow{M,T}(x, y, metadata) where {M,T}
+    metadata
+    function QPow{T}(x, y, metadata) where {T}
         if SymbolicUtils._iszero(y)
             return 1
         elseif SymbolicUtils._isone(y)
@@ -13,7 +13,7 @@ struct QPow{M,T} <: QTerm
     end
 end
 
-QPow(x, y::T; metadata::M=NO_METADATA) where {M,T} = QPow{M,T}(x, y, metadata)
+QPow(x, y::T; metadata=NO_METADATA) where {T} = QPow{T}(x, y, metadata)
 Base.hash(q::QPow, h::UInt) = hash(QPow, hash(q.x, SymbolicUtils.hashvec(q.y, h)))
 
 SymbolicUtils.operation(::QPow) = (^)

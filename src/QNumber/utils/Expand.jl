@@ -1,3 +1,5 @@
+import Symbolics: expand
+
 function expand(a::T, b::QAdd) where T<:QNumber
     terms = Any[a * b_ for b_ in arguments(b)]
     return sum(terms)
@@ -52,10 +54,4 @@ end
 
 function full_expand(x::QNumber)
     return expand(x; full=true)
-end
-
-function Symbolics.expand(x::QNumber; kwargs...)
-    expansion = average(x)
-    expansion_ = SymbolicUtils.expand(expansion; kwargs...)
-    return undo_average(expansion_)
 end

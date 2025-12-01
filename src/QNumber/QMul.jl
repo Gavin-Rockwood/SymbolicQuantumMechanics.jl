@@ -10,11 +10,11 @@ Fields:
 * arg_c: The commutative prefactor.
 * args_nc: A vector containing all [`QSym`](@ref) types.
 """
-struct QMul{M} <: QTerm
+struct QMul <: QTerm
     arg_c
     args_nc::Vector{Any}
-    metadata::M
-    function QMul{M}(arg_c, args_nc, metadata) where {M}
+    metadata
+    function QMul(arg_c, args_nc, metadata)
         if SymbolicUtils._isone(arg_c) && length(args_nc) == 1
             return args_nc[1]
         elseif (0 in args_nc) || isequal(arg_c, 0)
@@ -24,7 +24,7 @@ struct QMul{M} <: QTerm
         end
     end
 end
-QMul(arg_c, args_nc; metadata::M=NO_METADATA) where {M} = QMul{M}(arg_c, args_nc, metadata)
+QMul(arg_c, args_nc; metadata=NO_METADATA) = QMul(arg_c, args_nc, metadata)
 Base.hash(q::QMul, h::UInt) = hash(QMul, hash(q.arg_c, SymbolicUtils.hashvec(q.args_nc, h)))
 
 SymbolicUtils.operation(::QMul) = (*)

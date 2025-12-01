@@ -13,14 +13,18 @@ function get_string(q::QMul; in_prog=false)
     str = ""
     if !SymbolicUtils._isone(q.arg_c)
         if typeof(q.arg_c) <: Num
-            if operation(q.arg_c.val) == +
-                str *= "\\left("
+            if iscall(q.arg_c.val)
+                if operation(q.arg_c.val) == +
+                    str *= "\\left("
+                end
             end
         end
         str *= string(q.arg_c) * ""
         if typeof(q.arg_c) <: Num
-            if operation(q.arg_c.val) == +
-                str *= "\\right)"
+            if iscall(q.arg_c.val)
+                if operation(q.arg_c.val) == +
+                    str *= "\\right)"
+                end
             end
         end
         str *= " "

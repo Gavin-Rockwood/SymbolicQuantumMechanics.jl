@@ -4,23 +4,23 @@
 Bosonic operator on a [`FockSpace`](@ref) representing the quantum harmonic
 oscillator annihilation operator.
 """
-struct Boson{L,M} <: QSym
-    at::L
+struct Boson <: QSym
+    at
     name::Symbol
-    metadata::M
+    metadata
     dag::Bool
-    function Boson(at::L, name::Symbol, metadata::M, dag::Bool) where {L,M}
-        new{L,M}(at, name, metadata, dag)
+    function Boson(at, name::Symbol, metadata, dag::Bool)
+        new(at, name, metadata, dag)
     end
 end
 
-struct Fermion{L,M} <: QSym
-    at::L
+struct Fermion <: QSym
+    at
     name::Symbol
-    metadata::M
+    metadata
     dag::Bool
-    function Fermion(at::L, name::Symbol, metadata::M, dag::Bool) where {L,M}
-        new{L,M}(at, name, metadata, dag)
+    function Fermion(at, name::Symbol, metadata, dag::Bool)
+        new(at, name, metadata, dag)
     end
 end
 
@@ -38,6 +38,6 @@ end
 
 for f in [:Boson, :Fermion]
     @eval $(f)(at, name; metadata=NO_METADATA, dag::Bool=false) = $(f)(at, name, metadata, dag)
-    @eval $(f)(at, name; metadata=NO_METADATA, dag::Bool=false) = $(f)(at, name, metadata, dag)
+    #@eval $(f)(at, name; metadata=NO_METADATA, dag::Bool=false) = $(f)(at, name, metadata, dag)
     @eval $(f)(name; metadata=NO_METADATA, dag::Bool=false) = $(f)(nothing, name, metadata, dag)
 end

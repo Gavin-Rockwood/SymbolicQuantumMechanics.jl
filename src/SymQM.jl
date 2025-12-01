@@ -3,6 +3,10 @@ module SymQM
 using TermInterface
 using Symbolics
 using SymbolicUtils
+
+using Latexify
+using LaTeXStrings
+
 using Reexport
 
 using .SymbolicUtils: NO_METADATA

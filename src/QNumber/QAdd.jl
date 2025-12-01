@@ -5,7 +5,10 @@ Represent an addition involving [`QNumber`](@ref) and other types.
 """
 struct QAdd <: QTerm
     arguments::Vector{Any}
+    metadata
 end
+
+QAdd(x; metadata=NO_METADATA) = QAdd(x, metadata)
 
 Base.hash(q::T, h::UInt) where {T<:QAdd} = hash(T, SymbolicUtils.hashvec(q.arguments, h))
 function Base.isequal(a::QAdd, b::QAdd)
