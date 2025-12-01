@@ -29,15 +29,20 @@ function get_string(q::QMul; in_prog=false)
         end
         str *= " "
     end
-    for arg in q.args_nc
-        if typeof(arg) <: QAdd
-            str *= "\\left("
-        end
-        str *= get_string(arg; in_prog=true)
-        if typeof(arg) <: QAdd
-            str *= "\\right)"
-        end
+    if q.args_nc isa QNumber
+        str *= get_string(q.args_nc; in_prog=true)
         str *= " "
+    else
+        for arg in q.args_nc
+            if typeof(arg) <: QAdd
+                str *= "\\left("
+            end
+            str *= get_string(arg; in_prog=true)
+            if typeof(arg) <: QAdd
+                str *= "\\right)"
+            end
+            str *= " "
+        end
     end
     if in_prog
         return str
@@ -79,4 +84,8 @@ function get_string(q::QPow; in_prog=false)
     else
         return raw"$" * str * raw"$"
     end
+end
+
+function get_string(x; in_prog = false)
+    string(x)
 end

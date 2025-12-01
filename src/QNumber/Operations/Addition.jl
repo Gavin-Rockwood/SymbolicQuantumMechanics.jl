@@ -15,34 +15,35 @@ function +(a::QAdd, b::SNuN)
 end
 
 function +(a::QNumber, b::QNumber)
-    args = [a, b]
-    return QAdd(args)
+    args = _reduce_add([a, b])
+    if length(args) == 1
+        return args[1]
+    else
+        return QAdd(args)
+    end
 end
 
 function +(a::QAdd, b::QNumber)
-    args = vcat(a.arguments, b)
-    return QAdd(args)
+    args = _reduce_add(vcat(a.arguments, b))
+    if length(args) == 1
+        return args[1]
+    else
+        return QAdd(args)
+    end
 end
 function +(b::QNumber, a::QAdd)
-    args = vcat(a.arguments, b)
-    return QAdd(args)
+    args = _reduce_add(vcat(a.arguments, b))
+    if length(args) == 1
+        return args[1]
+    else
+        return QAdd(args)
+    end
 end
 function +(a::QAdd, b::QAdd)
-    args = vcat(a.arguments, b.arguments)
-    return QAdd(args)
-end
-
-function flatten_adds!(args)
-    i = 1
-    while i <= length(args)
-        if args[i] isa QAdd
-            append!(args, args[i].arguments)
-            deleteat!(args, i)
-        elseif SymbolicUtils._iszero(args[i]) || isequal(args[i], 0)
-            deleteat!(args, i)
-        else
-            i += 1
-        end
+    args = _reduce_add(vcat(a.arguments, b.arguments))
+    if length(args) == 1
+        return args[1]
+    else
+        return QAdd(args)
     end
-    return args
 end

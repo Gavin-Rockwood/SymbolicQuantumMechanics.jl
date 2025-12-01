@@ -30,10 +30,45 @@ function *(a::QMul, b::QSym)
     return QMul(a.arg_c, args_nc)
 end
 
+function *(a::QPow, b::T) where T<:QNumber
+    if a.x == b
+        new_exponent = a.y + 1
+        return QPow(a.x, new_exponent; metadata=a.metadata)
+    else
+        args_nc = [a, b]
+        return QMul(1, args_nc)
+    end
+end
+function *(a::T, b::QPow) where T<:QNumber
+    if a == b.x
+        new_exponent = b.y + 1
+        return QPow(b.x, new_exponent; metadata=b.metadata)
+    else
+        args_nc = [a, b]
+        return QMul(1, args_nc)
+    end
+end
+function *(a::T, b::T) where T<:QPow
+    if a.x == b.x
+        new_exponent = a.y + b.y
+        return QPow(a.x, new_exponent; metadata=a.metadata)
+    else
+        args_nc = [a, b]
+        return QMul(1, args_nc)
+    end
+end
+
+
 function *(a::QMul, b::QMul)
-    args_nc = vcat(a.args_nc, b.args_nc)
     arg_c = a.arg_c * b.arg_c
-    return QMul(arg_c, args_nc)
+    if isequal(a.args_nc, b.args_nc)
+        x = QMul(1, a.args_nc)
+        y = 2
+        return arg_c * QPow(x, y)
+    else
+        args_nc = vcat(a.args_nc, b.args_nc)
+        return QMul(arg_c, args_nc)
+    end
 end
 
 Base.:/(a::QNumber, b::SNuN) = (1 / b) * a
@@ -44,6 +79,12 @@ function *(a::QAdd, b::SNuN)
     return QMul(b, [a])
 end
 function *(a::SNuN, b::QAdd)
+    return QMul(a, [b])
+end
+function *(a::QPow, b::SNuN)
+    return QMul(b, [a])
+end
+function *(a::SNuN, b::QPow)
     return QMul(a, [b])
 end
 function *(a::T, b::QAdd) where T<:QNumber

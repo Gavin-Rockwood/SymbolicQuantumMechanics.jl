@@ -10,6 +10,8 @@ using LaTeXStrings
 using Reexport
 
 using .SymbolicUtils: NO_METADATA
+import .Symbolics: simplify
+import .Symbolics: expand
 
 
 

@@ -16,28 +16,40 @@ function expand(a::QNumber, b::QNumber)
     return a * b
 end
 
-
 function expand(x::QNumber; full=false)
     return x
 end
+
 
 function expand(a::QMul; full=false)
     arg_c = a.arg_c
     args_nc = a.args_nc
 
     b = args_nc[1]
-    if full
-        b = expand(b; full=full)
-    end
-    for i in 2:length(args_nc)
-        if full
-            b = expand(b, expand(args_nc[i]; full=full))
-        else
-            b = expand(b, args_nc[i])
+    if length(args_nc) == 1 && args_nc[1] isa QAdd
+        new_args = []
+        for term in arguments(b)
+            if full
+                push!(new_args, expand(arg_c * expand(term; full=full); full=full))
+            else
+                push!(new_args, expand(arg_c * term))
+            end
         end
+        return sum(new_args)
+    else
+        if full
+            b = expand(b; full=full)
+        end
+        for i in 2:length(args_nc)
+            if full
+                b = expand(b, expand(args_nc[i]; full=full))
+            else
+                b = expand(b, args_nc[i])
+            end
 
+        end
+        return arg_c * b
     end
-    return arg_c * b
 end
 function expand(a::QAdd; full=false)
     new_args = []

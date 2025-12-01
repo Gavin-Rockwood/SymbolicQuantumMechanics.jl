@@ -20,6 +20,10 @@ struct QMul <: QTerm
         elseif (0 in args_nc) || isequal(arg_c, 0)
             return 0
         else
+            args_nc = _reduce_mul(args_nc)
+            if length(args_nc) == 1 && SymbolicUtils._isone(arg_c)
+                return args_nc[1]
+            end
             return new(arg_c, args_nc, metadata)
         end
     end
@@ -54,4 +58,18 @@ function Base.isequal(a::QMul, b::QMul)
         isequal(arg_a, arg_b) || return false
     end
     return true
+end
+
+
+function _reduce_mul(args_nc)
+    new_args = Any[args_nc[1]]
+    for i in 2:length(args_nc)
+        if _can_combine(new_args[end], args_nc[i])
+            combined = _combine(new_args[end], args_nc[i])
+            new_args[end] = combined
+        else
+            push!(new_args, args_nc[i])
+        end
+    end
+    return new_args
 end

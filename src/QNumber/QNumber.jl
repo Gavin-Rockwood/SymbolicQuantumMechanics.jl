@@ -14,7 +14,10 @@ include("Operations/Power.jl")
 include("Operations/Multiplication.jl")
 include("Operations/Addition.jl")
 
+include("utils/Combiners.jl")
+include("utils/SimplificationRules.jl")
 include("utils/Simplify.jl")
+export simplify_coeff
 include("utils/Expand.jl")
 export expand, full_expand
 include("utils/Strings.jl")

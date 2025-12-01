@@ -12,12 +12,15 @@ Abstract type representing fundamental operator types.
 """
 abstract type QSym <: QNumber end
 
+function Base.length(::QSym)
+    return 1
+end
 # Generic hash fallback for interface -- this will be slow
 function Base.hash(op::T, h::UInt) where {T<:QSym}
     n = fieldcount(T)
     if n == 3
         # These three fields need to be defined for any QSym
-        return hash(T, hash(op.hilbert, hash(op.name, hash(op.at, h))))
+        return hash(T, hash(op.name, hash(op.at, h)))
     else
         # If there are more we'll need to iterate through
         h_ = copy(h)
@@ -26,7 +29,7 @@ function Base.hash(op::T, h::UInt) where {T<:QSym}
                 h_ = hash(getfield(op, k), h_)
             end
         end
-        return hash(T, hash(op.hilbert, hash(op.name, hash(op.at, h_))))
+        return hash(T, hash(op.name, hash(op.at, h_)))
     end
 end
 
