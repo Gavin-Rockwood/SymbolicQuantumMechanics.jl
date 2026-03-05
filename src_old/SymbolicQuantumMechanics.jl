@@ -20,25 +20,8 @@ const SNuN = Union{<:SymbolicUtils.Symbolic{<:Number},<:Number}
 
 QuantumSimplificationRules = []
 
-"""
-    QExpression
-
-Abstract type representing any expression involving operators.
-"""
-abstract type QExpression end
-
-"""
-    QSymbol <: QExpression
-Abstract type representing fundamental operator types.
-"""
-abstract type QSymbol <: QExpression end
-
-abstract type AbstractHilbertSpace end
-abstract type AbstractParticle end
- 
-
-
-include("QExpression/QExpression.jl")
+include("QNumber/QNumber.jl")
+include("Operators/Operators.jl")
 
 
 end # module SymQM

@@ -26,7 +26,19 @@ function expand(a::QMul; full=false)
     args_nc = a.args_nc
 
     b = args_nc[1]
-    if length(args_nc) == 1 && args_nc[1] isa QAdd
+    if length(args_nc) > 1
+        if full
+            b = expand(b; full=full)
+        end
+        for i in 2:length(args_nc)
+            if full
+                b = expand(b, expand(args_nc[i]; full=full))
+            else
+                b = expand(b, args_nc[i])
+            end
+        end
+    end
+    if b isa QAdd
         new_args = []
         for term in arguments(b)
             if full
@@ -37,17 +49,6 @@ function expand(a::QMul; full=false)
         end
         return sum(new_args)
     else
-        if full
-            b = expand(b; full=full)
-        end
-        for i in 2:length(args_nc)
-            if full
-                b = expand(b, expand(args_nc[i]; full=full))
-            else
-                b = expand(b, args_nc[i])
-            end
-
-        end
         return arg_c * b
     end
 end

@@ -64,11 +64,13 @@ end
 function _reduce_mul(args_nc)
     new_args = Any[args_nc[1]]
     for i in 2:length(args_nc)
-        if _can_combine(new_args[end], args_nc[i])
-            combined = _combine(new_args[end], args_nc[i])
-            new_args[end] = combined
-        else
-            push!(new_args, args_nc[i])
+        if !(args_nc[i] isa Identity)
+            if _can_combine(new_args[end], args_nc[i])
+                combined = _combine(new_args[end], args_nc[i])
+                new_args[end] = combined
+            else
+                push!(new_args, args_nc[i])
+            end
         end
     end
     return new_args

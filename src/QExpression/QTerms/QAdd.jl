@@ -5,15 +5,22 @@ Represent an addition involving [`QNumber`](@ref) and other types.
 """
 struct QAdd <: QTerm
     arguments
+    hilbertspace::AbstractHilbertSpace
     metadata
-    function QAdd(arguments, metadata)
-        new(_reduce_add(arguments), metadata)
+    function QAdd(arguments, hilbertspace, metadata)
+        reduced_args = _reduce_add(arguments)
+        if length(reduced_args) == 1
+            return reduced_args[1]
+        end
+        new(reduced_args, hilbertspace, metadata)
     end
 end
 
-QAdd(x; metadata=NO_METADATA) = QAdd(x, metadata)
+QAdd(x, hilbertspace; metadata=NO_METADATA) = QAdd(x, hilbertspace, metadata)
+QAdd(x; metadata=NO_METADATA) = QAdd(x, TensorProductHilbertSpace(map(get_hilbertspace, x)); metadata)
 
-Base.hash(q::T, h::UInt) where {T<:QAdd} = hash(T, SymbolicUtils.hashvec(q.arguments, h))
+
+Base.hash(q::T, h::UInt) where {T<:QAdd} = hash(T, SymbolicUtils.hashvec(q.arguments, hash(q.hilbertspace, h)))
 function Base.isequal(a::QAdd, b::QAdd)
     length(a.arguments) == length(b.arguments) || return false
     for (arg_a, arg_b) in zip(a.arguments, b.arguments)
@@ -31,10 +38,11 @@ Base.adjoint(q::QAdd) = QAdd(map(_adjoint, q.arguments))
 
 
 function _flatten_add(args)
+    # println("Flattening: ", args)
     new_args = []
     for i in 1:length(args)
         if args[i] isa QAdd
-            push!(new_args, _flatten_add(args[i].arguments))
+            append!(new_args, _flatten_add(args[i].arguments))
         elseif args[i] isa Number
             if isequal(args[i], 0)
                 continue
@@ -50,7 +58,7 @@ end
 
 function _reduce_add(args)
     args = _flatten_add(args)
-    new_args_dict = Dict{Any, Any}()
+    new_args_dict = Dict{Any,Any}()
     new_args = []
     for i in 1:length(args)
         arg = args[i] isa AbstractArray ? args[i] : [args[i]]
@@ -69,7 +77,7 @@ function _reduce_add(args)
     for key in keys(new_args_dict)
         if isequal(new_args_dict[key], 0)
             continue
-        elseif isequal(new_args_dict[key], 1)
+        elseif isequal(new_args_dict[key], 1) && !(key isa AbstractArray) && !(key[1] isa QMul)
             push!(new_args, key[1])
             continue
         else

@@ -17,7 +17,7 @@ include("Operations/Addition.jl")
 include("utils/Combiners.jl")
 include("utils/SimplificationRules.jl")
 include("utils/Simplify.jl")
-export simplify_coeff
+export simplify_coeff, simplify_quantum
 include("utils/Expand.jl")
 export expand, full_expand
 include("utils/Strings.jl")

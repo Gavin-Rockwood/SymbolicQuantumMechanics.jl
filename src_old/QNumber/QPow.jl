@@ -21,3 +21,12 @@ SymbolicUtils.arguments(a::QPow) = [a.x, a.y]
 SymbolicUtils.metadata(a::QPow) = a.metadata
 
 SymbolicUtils.maketerm(::Type{<:QPow}, ::typeof(^), args, metadata) = QPow(args[1], args[2]; metadata)
+
+function Base.isequal(a::QPow, b::QPow)
+    if !isequal(a.x, b.x)
+        return false
+    elseif !isequal(a.y, b.y)
+        return false
+    end
+    return true
+end
